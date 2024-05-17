@@ -7,7 +7,7 @@ import { ModalProvider } from "@/components/modal-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "",
+  title: "Elwin-AI",
   description: "AI Platform",
 };
 
