@@ -17,7 +17,8 @@ import { Loader } from "@/components/loader";
 import { cn } from "@/lib/utils";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
-import ReactMarkdown from "react-markdown"
+import ReactMarkdown from "react-markdown";
+import { useProModal } from "@/hooks/use-pro-modal";
 
 type ChatCompletionRequestMessage = {
     role: 'user' | 'system' | 'assistant';
@@ -25,8 +26,9 @@ type ChatCompletionRequestMessage = {
 };
 
 const CodePage = () => {
+    const proModal = useProModal();
     const router = useRouter();
-    const [messages, setMessages) = useState<ChatCompletionRequestMessage[]>([]);
+    const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -53,8 +55,12 @@ const CodePage = () => {
             setMessages((current) => [...current, userMessage, response.data]);
 
             form.reset();
-        } catch (error) {
-            console.error("Error occurred:", error);
+        } catch (error: any) {
+            if (error?.response?.status === 403) {
+                proModal.onOpen();
+            }
+        } finally {
+            router.refresh();
         }
     };
 
